@@ -142,8 +142,14 @@ format_timestamp({{Yr, Mo, Da}, {H, M, S}}) ->
 default_config() ->
     case get(aws_config) of
         undefined ->
-            #aws_config{access_key_id=os:getenv("AWS_ACCESS_KEY_ID"),
-                        secret_access_key=os:getenv("AWS_SECRET_ACCESS_KEY")};
+            GetEnv = fun (AppEnv, OsEnv) ->
+                             case application:get_env(erlcloud, AppEnv) of
+                                 {ok, Val} -> Val;
+                                 undefined -> os:getenv(OsEnv)
+                             end
+                     end,
+            #aws_config{access_key_id=GetEnv(aws_access_key_id, "AWS_ACCESS_KEY_ID"),
+                        secret_access_key=GetEnv(aws_secret_access_key, "AWS_SECRET_ACCESS_KEY")};
         Config ->
             Config
     end.
