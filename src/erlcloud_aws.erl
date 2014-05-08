@@ -4,7 +4,8 @@
          aws_request_xml/5, aws_request_xml/6, aws_request_xml/7, aws_request_xml/8,
          aws_request2/7,
          aws_request_xml2/5, aws_request_xml2/7,
-         param_list/2, default_config/0, update_config/1, format_timestamp/1,
+         param_list/2, param_map/2, param_map/4,
+         default_config/0, update_config/1, format_timestamp/1,
          http_headers_body/1,
          sign_v4/5]).
 
@@ -127,6 +128,17 @@ param_list([[{_, _}|_]|_] = Values, Key) ->
 param_list(Values, Key) ->
     [{lists:flatten([Key, $., integer_to_list(I)]), Value} ||
         {I, Value} <- lists:zip(lists:seq(1, length(Values)), Values)].
+
+param_map(Values, Key) -> param_map(Values, Key, "Name", "Value").
+param_map([], _Key, _KeyName, _ValName) -> [];
+param_map(Values, Key, KeyName, ValName) ->
+    lists:flatmap(
+      fun ({{K, V}, Idx}) ->
+              [{lists:flatten([Key, $., integer_to_list(Idx), $., KeyName]), K},
+               {lists:flatten([Key, $., integer_to_list(Idx), $., ValName]), V}]
+      end,
+      lists:zip(Values, lists:seq(1, length(Values)))).
+
 
 value_to_string(Integer) when is_integer(Integer) -> integer_to_list(Integer);
 value_to_string(Atom) when is_atom(Atom) -> atom_to_list(Atom);
