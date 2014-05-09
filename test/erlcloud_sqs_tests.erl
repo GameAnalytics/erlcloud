@@ -294,6 +294,19 @@ list_queues() ->
                           {"Version","2012-11-05"},
                           {"QueueNamePrefix",Prefix}],
                          '_'])),
+
+
+    Response = erlcloud_sqs:list_queues(),
+    ?assertEqual(["http://sqs.us-east-1.amazonaws.com/123456789012/testQueue"],
+                 Response),
+
+    ?assert(meck:called(erlcloud_aws, aws_request_xml,
+                        [post, "queue.amazonaws.com",
+                         "/",
+                         [{"Action","ListQueues"},
+                          {"Version","2012-11-05"}],
+                         '_'])),
+
     ok.
 
 receive_message() ->

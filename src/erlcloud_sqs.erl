@@ -158,8 +158,11 @@ list_queues(QueueNamePrefix) ->
 -spec list_queues/2 :: (string(), aws_config()) -> [string()].
 list_queues(QueueNamePrefix, Config)
   when is_list(QueueNamePrefix) ->
-    Doc = sqs_xml_request(Config, "/", "ListQueues",
-                          [{"QueueNamePrefix", QueueNamePrefix}]),
+    Doc = case QueueNamePrefix of
+              "" -> sqs_xml_request(Config, "/", "ListQueues", []);
+              _  -> sqs_xml_request(Config, "/", "ListQueues",
+                                    [{"QueueNamePrefix", QueueNamePrefix}])
+          end,
     erlcloud_xml:get_list("ListQueuesResult/QueueUrl", Doc).
 
 -spec receive_message/1 :: (string()) -> proplist().
