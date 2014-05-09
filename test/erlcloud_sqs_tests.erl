@@ -124,6 +124,19 @@ create_queue() ->
                           {"Attribute.1.Name","VisibilityTimeout"},
                           {"Attribute.1.Value",VisibilityTimeout}],
                          '_'])),
+
+
+    Response = erlcloud_sqs:create_queue(QueueName),
+    ?assertEqual("http://sqs.us-east-1.amazonaws.com/123456789012/testQueue",
+                 proplists:get_value(queue_url, Response)),
+
+    ?assert(meck:called(erlcloud_aws, aws_request_xml,
+                        [post, "queue.amazonaws.com",
+                         "/",
+                         [{"Action","CreateQueue"},
+                          {"Version","2012-11-05"},
+                          {"QueueName",QueueName}],
+                         '_'])),
     ok.
 
 delete_message() ->

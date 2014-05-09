@@ -83,7 +83,7 @@ create_queue(QueueName) ->
 -spec create_queue/2 :: (string(), [{sqs_queue_attribute_name(), string() | integer()}] | aws_config()) -> proplist().
 create_queue(QueueName, Config)
   when is_record(Config, aws_config) ->
-    create_queue(QueueName, none, Config);
+    create_queue(QueueName, [], Config);
 create_queue(QueueName, Attributes) ->
     create_queue(QueueName, Attributes, default_config()).
 
