@@ -444,6 +444,19 @@ send_message() ->
                           {"Version","2012-11-05"},
                           {"MessageBody",MessageBody}],
                          '_'])),
+
+
+    ?assertEqual([{message_id, "5fea7756-0ea4-451a-a703-a558b933e274"},
+                  {md5_of_message_body, "fafb00f5732ab283681e124bf8747ed1"}],
+                 erlcloud_sqs:send_message(QueueName, list_to_binary(MessageBody))),
+
+    ?assert(meck:called(erlcloud_aws, aws_request_xml,
+                        [post, "queue.amazonaws.com",
+                         "/" ++ QueueName,
+                         [{"Action","SendMessage"},
+                          {"Version","2012-11-05"},
+                          {"MessageBody",list_to_binary(MessageBody)}],
+                         '_'])),
     ok.
 
 set_queue_attributes() ->

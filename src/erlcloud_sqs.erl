@@ -282,9 +282,9 @@ send_message(QueueName, MessageBody, DelaySeconds) ->
 
 -spec send_message/4 :: (string(), string(), 0..900, aws_config()) -> proplist().
 send_message(QueueName, MessageBody, DelaySeconds, Config)
-  when is_list(QueueName), is_list(MessageBody),
-       (DelaySeconds >= 0 andalso DelaySeconds =< 900) orelse
-       DelaySeconds =:= none ->
+  when is_list(QueueName), (is_list(MessageBody) orelse is_binary(MessageBody)),
+       ((DelaySeconds >= 0 andalso DelaySeconds =< 900) orelse
+        DelaySeconds =:= none) ->
     Params = [{K, V} || {K, V} <- [{"MessageBody", MessageBody},
                                    {"DelaySeconds", DelaySeconds}],
                         V =/= none],
