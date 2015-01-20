@@ -6,6 +6,10 @@
           sdb_host="sdb.amazonaws.com"::string(),
           elb_host="elasticloadbalancing.amazonaws.com"::string(),
           sqs_host="queue.amazonaws.com"::string(),
+          sqs_scheme="https://"::string(),
+          sqs_port=443::non_neg_integer(),
+          sns_scheme="http://"::string(),
+          sns_host="sns.amazonaws.com"::string(),
           mturk_host="mechanicalturk.amazonaws.com"::string(),
           mon_host="monitoring.amazonaws.com"::string(),
           mon_port=undefined::non_neg_integer()|undefined,
@@ -24,3 +28,26 @@
           timeout=10000::timeout()
          }).
 -type(aws_config() :: #aws_config{}).
+
+-record(aws_request,
+        {
+          %% Provided by requesting service
+          service :: s3,
+          uri :: string() | binary(),
+          method :: atom(),
+          request_headers :: [{string(), string()}],
+          request_body :: binary(),
+
+          %% Read from response
+          attempt = 0 :: integer(),
+          response_type :: ok | error,
+          error_type :: aws | httpc,
+          httpc_error_reason :: term(),
+          response_status :: pos_integer(),
+          response_status_line :: string(),
+          response_headers :: [{string(), string()}],
+          response_body :: binary(),
+
+          %% Service specific error information
+          should_retry :: boolean()
+        }).
