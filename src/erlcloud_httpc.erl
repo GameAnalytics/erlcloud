@@ -44,7 +44,8 @@ request(URL, Method, Hdrs, Body, Timeout,
     F(URL, Method, Hdrs, Body, Timeout, Config).
 
 request_lhttpc(URL, Method, Hdrs, Body, Timeout, _Config) ->
-    lhttpc:request(URL, Method, Hdrs, Body, Timeout, []).
+    HdrsStr = [{to_list_string(K), to_list_string(V)} || {K, V} <- Hdrs],
+    lhttpc:request(URL, Method, HdrsStr, Body, Timeout, []).
 
 request_httpc(URL, Method, Hdrs, <<>>, Timeout, _Config) ->
     HdrsStr = [{to_list_string(K), to_list_string(V)} || {K, V} <- Hdrs],
