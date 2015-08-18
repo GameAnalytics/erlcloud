@@ -43,13 +43,13 @@ add_permission() ->
                    {"125074342642", "ReceiveMessage"},
                    {"1234567890", "*"}],
 
-    meck:expect(erlcloud_aws, aws_request, 5, ExampleResponse),
+    meck:expect(erlcloud_aws, aws_request, 7, ExampleResponse),
 
     ?assertEqual(ok,
                  erlcloud_sqs:add_permission(QueueName, Label, Permissions)),
 
     ?assert(meck:called(erlcloud_aws, aws_request,
-                        [post, "queue.amazonaws.com",
+                        [post, undefined, "queue.amazonaws.com", undefined,
                          "/" ++ QueueName,
                          [{"Action","AddPermission"},
                           {"Version","2012-11-05"},
@@ -76,7 +76,7 @@ change_message_visibility() ->
     ReceiptHandle = "MbZj6wDWli%2BJvwwJaBV%2B3dcjk2YW2vA3%2BSTFFljTM8tJJg6HRG6PYSasuWXPJB%2BCwLj1FjgXUv1uSj1gUPAWV66FU/WeR4mq2OKpEGYWbnLmpRCJVAyeMjeU5ZBdtcQ%2BQEauMZc8ZRv37sIW2iJKq3M9MFx1YvV11A2x/KSbkJ0=",
     VisibilityTimeout = 60,
 
-    meck:expect(erlcloud_aws, aws_request, 5, ExampleResponse),
+    meck:expect(erlcloud_aws, aws_request, 7, ExampleResponse),
 
     ?assertEqual(ok,
                  erlcloud_sqs:change_message_visibility(QueueName,
@@ -84,7 +84,7 @@ change_message_visibility() ->
                                                         VisibilityTimeout)),
 
     ?assert(meck:called(erlcloud_aws, aws_request,
-                        [post, "queue.amazonaws.com",
+                        [post, undefined, "queue.amazonaws.com", undefined,
                          "/" ++ QueueName,
                          [{"Action","ChangeMessageVisibility"},
                           {"Version","2012-11-05"},
@@ -108,7 +108,7 @@ create_queue() ->
     QueueName = "testQueue",
     Attributes = [{"VisibilityTimeout", VisibilityTimeout=40}],
 
-    meck:expect(erlcloud_aws, aws_request_xml, 5,
+    meck:expect(erlcloud_aws, aws_request_xml, 7,
                 element(1, xmerl_scan:string(ExampleResponse))),
 
     Response = erlcloud_sqs:create_queue(QueueName, Attributes),
@@ -116,7 +116,7 @@ create_queue() ->
                  proplists:get_value(queue_url, Response)),
 
     ?assert(meck:called(erlcloud_aws, aws_request_xml,
-                        [post, "queue.amazonaws.com",
+                        [post, undefined, "queue.amazonaws.com", undefined,
                          "/",
                          [{"Action","CreateQueue"},
                           {"Version","2012-11-05"},
@@ -131,7 +131,7 @@ create_queue() ->
                  proplists:get_value(queue_url, Response)),
 
     ?assert(meck:called(erlcloud_aws, aws_request_xml,
-                        [post, "queue.amazonaws.com",
+                        [post, undefined, "queue.amazonaws.com", undefined,
                          "/",
                          [{"Action","CreateQueue"},
                           {"Version","2012-11-05"},
@@ -151,12 +151,12 @@ delete_message() ->
     QueueName = "testQueue",
     ReceiptHandle = "MbZj6wDWli%2BJvwwJaBV%2B3dcjk2YW2vA3%2BSTFFljTM8tJJg6HRG6PYSasuWXPJB%2BCwLj1FjgXUv1uSj1gUPAWV66FU/WeR4mq2OKpEGYWbnLmpRCJVAyeMjeU5ZBdtcQ%2BQEauMZc8ZRv37sIW2iJKq3M9MFx1YvV11A2x/KSbkJ0=",
 
-    meck:expect(erlcloud_aws, aws_request, 5, ExampleResponse),
+    meck:expect(erlcloud_aws, aws_request, 7, ExampleResponse),
 
     ?assertEqual(ok, erlcloud_sqs:delete_message(QueueName, ReceiptHandle)),
 
     ?assert(meck:called(erlcloud_aws, aws_request,
-                        [post, "queue.amazonaws.com",
+                        [post, undefined, "queue.amazonaws.com", undefined,
                          "/" ++ QueueName,
                          [{"Action","DeleteMessage"},
                           {"Version","2012-11-05"},
@@ -211,7 +211,7 @@ get_queue_attributes_all() ->
 
     QueueName = "testQueue",
 
-    meck:expect(erlcloud_aws, aws_request_xml, 5,
+    meck:expect(erlcloud_aws, aws_request_xml, 7,
                 element(1, xmerl_scan:string(ExampleResponse))),
 
     Response = erlcloud_sqs:get_queue_attributes(QueueName),
@@ -227,7 +227,7 @@ get_queue_attributes_all() ->
                  Response),
 
     ?assert(meck:called(erlcloud_aws, aws_request_xml,
-                        [post, "queue.amazonaws.com",
+                        [post, undefined, "queue.amazonaws.com", undefined,
                          "/" ++ QueueName,
                          [{"Action","GetQueueAttributes"},
                           {"Version","2012-11-05"},
@@ -259,7 +259,7 @@ get_queue_attributes() ->
     QueueName = "testQueue",
     Attributes = ["VisibilityTimeout", "DelaySeconds", "ReceiveMessageWaitTimeSeconds"],
 
-    meck:expect(erlcloud_aws, aws_request_xml, 5,
+    meck:expect(erlcloud_aws, aws_request_xml, 7,
                 element(1, xmerl_scan:string(ExampleResponse))),
 
     Response = erlcloud_sqs:get_queue_attributes(QueueName, Attributes),
@@ -269,7 +269,7 @@ get_queue_attributes() ->
                  Response),
 
     ?assert(meck:called(erlcloud_aws, aws_request_xml,
-                        [post, "queue.amazonaws.com",
+                        [post, undefined, "queue.amazonaws.com", undefined,
                          "/" ++ QueueName,
                          [{"Action","GetQueueAttributes"},
                           {"Version","2012-11-05"},
@@ -293,7 +293,7 @@ list_queues() ->
 
     Prefix = "t",
 
-    meck:expect(erlcloud_aws, aws_request_xml, 5,
+    meck:expect(erlcloud_aws, aws_request_xml, 7,
                 element(1, xmerl_scan:string(ExampleResponse))),
 
     Response = erlcloud_sqs:list_queues(Prefix),
@@ -301,7 +301,7 @@ list_queues() ->
                  Response),
 
     ?assert(meck:called(erlcloud_aws, aws_request_xml,
-                        [post, "queue.amazonaws.com",
+                        [post, undefined, "queue.amazonaws.com", undefined,
                          "/",
                          [{"Action","ListQueues"},
                           {"Version","2012-11-05"},
@@ -314,7 +314,7 @@ list_queues() ->
                  Response),
 
     ?assert(meck:called(erlcloud_aws, aws_request_xml,
-                        [post, "queue.amazonaws.com",
+                        [post, undefined, "queue.amazonaws.com", undefined,
                          "/",
                          [{"Action","ListQueues"},
                           {"Version","2012-11-05"}],
@@ -360,7 +360,7 @@ receive_message() ->
     VisibilityTimeout = 15,
     AttributeNames = ["All"],
 
-    meck:expect(erlcloud_aws, aws_request_xml, 5,
+    meck:expect(erlcloud_aws, aws_request_xml, 7,
                 element(1, xmerl_scan:string(ExampleResponse))),
 
     Response = erlcloud_sqs:receive_message(
@@ -377,7 +377,7 @@ receive_message() ->
                  Response),
 
     ?assert(meck:called(erlcloud_aws, aws_request_xml,
-                        [post, "queue.amazonaws.com",
+                        [post, undefined, "queue.amazonaws.com", undefined,
                          "/" ++ QueueName,
                          [{"Action","ReceiveMessage"},
                           {"Version","2012-11-05"},
@@ -399,13 +399,13 @@ remove_permission() ->
     QueueName = "testQueue",
     Label = "testLabel",
 
-    meck:expect(erlcloud_aws, aws_request, 5, ExampleResponse),
+    meck:expect(erlcloud_aws, aws_request, 7, ExampleResponse),
 
     ?assertEqual(ok,
                  erlcloud_sqs:remove_permission(QueueName, Label)),
 
     ?assert(meck:called(erlcloud_aws, aws_request,
-                        [post, "queue.amazonaws.com",
+                        [post, undefined, "queue.amazonaws.com", undefined,
                          "/" ++ QueueName,
                          [{"Action","RemovePermission"},
                           {"Version","2012-11-05"},
@@ -430,7 +430,7 @@ send_message() ->
     QueueName = "testQueue",
     MessageBody = "This is a test message",
 
-    meck:expect(erlcloud_aws, aws_request_xml, 5,
+    meck:expect(erlcloud_aws, aws_request_xml, 7,
                 element(1, xmerl_scan:string(ExampleResponse))),
 
     ?assertEqual([{message_id, "5fea7756-0ea4-451a-a703-a558b933e274"},
@@ -438,7 +438,7 @@ send_message() ->
                  erlcloud_sqs:send_message(QueueName, MessageBody)),
 
     ?assert(meck:called(erlcloud_aws, aws_request_xml,
-                        [post, "queue.amazonaws.com",
+                        [post, undefined, "queue.amazonaws.com", undefined,
                          "/" ++ QueueName,
                          [{"Action","SendMessage"},
                           {"Version","2012-11-05"},
@@ -451,7 +451,7 @@ send_message() ->
                  erlcloud_sqs:send_message(QueueName, list_to_binary(MessageBody))),
 
     ?assert(meck:called(erlcloud_aws, aws_request_xml,
-                        [post, "queue.amazonaws.com",
+                        [post, undefined, "queue.amazonaws.com", undefined,
                          "/" ++ QueueName,
                          [{"Action","SendMessage"},
                           {"Version","2012-11-05"},
@@ -471,12 +471,12 @@ set_queue_attributes() ->
     QueueName = "testQueue",
     Attributes = [{"VisibilityTimeout", 35}],
 
-    meck:expect(erlcloud_aws, aws_request, 5, ExampleResponse),
+    meck:expect(erlcloud_aws, aws_request, 7, ExampleResponse),
 
     ?assertEqual(ok, erlcloud_sqs:set_queue_attributes(QueueName, Attributes)),
 
     ?assert(meck:called(erlcloud_aws, aws_request,
-                        [post, "queue.amazonaws.com",
+                        [post, undefined, "queue.amazonaws.com", undefined,
                          "/" ++ QueueName,
                          [{"Action","SetQueueAttributes"},
                           {"Version","2012-11-05"},
